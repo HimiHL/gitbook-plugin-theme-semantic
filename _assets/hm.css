@@ -25,3 +25,6 @@ body {
 #footer {
     height: 155px;
 }
+.ui.accordion .item {
+    margin: 8px 0px !important;
+}
