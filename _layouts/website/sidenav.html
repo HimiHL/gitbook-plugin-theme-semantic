@@ -1,0 +1,65 @@
+
+{% macro articles(_articles) %}
+<div class="ui accordion vertical secondary fluid menu">
+    {% for article in _articles %}
+            {% if article.articles.length == 0 %}
+                {% if article.path and getPageByPath(article.path) %}
+                    <a href="{{ article.path|resolveFile }}{{ article.anchor }}" class="item  {% if article.path == file.path and not article.anchor %}active{% endif %}" data-level="{{ article.level }}" {% if article.path %}data-path="{{ article.path|resolveFile }}"{% endif %}>
+                        {{ article.title }}
+                    </a>
+                {% elif article.url %}
+                    <a target="_blank" href="{{ article.url }}" class="item  {% if article.path == file.path and not article.anchor %}active{% endif %}" data-level="{{ article.level }}" {% if article.path %}data-path="{{ article.path|resolveFile }}"{% endif %}>
+                        {{ article.title }}
+                    </a>
+                {% endif %}
+            {% else %}
+                {% if article.path and getPageByPath(article.path) %}
+                    <div href="{{ article.path|resolveFile }}{{ article.anchor }}" class="title {% if article.path == file.path and not article.anchor %}active{% endif %}" data-level="{{ article.level }}" {% if article.path %}data-path="{{ article.path|resolveFile }}"{% endif %}>
+                        <i class="dropdown icon"></i>
+                        {{ article.title }}
+                    </div>
+                {% elif article.url %}
+                    <div href="{{ article.url }}" class="title {% if article.path == file.path and not article.anchor %}active{% endif %}" data-level="{{ article.level }}" {% if article.path %}data-path="{{ article.path|resolveFile }}"{% endif %}>
+                        <i class="dropdown icon"></i>
+                        {{ article.title }}
+                    </div>
+                {% else %}
+                    <div class="title {% if article.path == file.path and not article.anchor %}active{% endif %}" data-level="{{ article.level }}" {% if article.path %}data-path="{{ article.path|resolveFile }}"{% endif %}>
+                        <i class="dropdown icon"></i>
+                        {{ article.title }}
+                    </div>
+                {% endif %}
+                <div class="content {% if article.path == file.path and not article.anchor %}active{% endif %}">
+                    {{ items(article.articles, file, config) }}
+                </div>
+            {% endif %}
+    {% endfor %}
+</div>
+{% endmacro %}
+
+{% macro items(_items) %}
+    {% for article in _items %}
+        {% if article.path and getPageByPath(article.path) %}
+            <a href="{{ article.path|resolveFile }}{{ article.anchor }}" class="item  {% if article.path == file.path and not article.anchor %}active{% endif %}" data-level="{{ article.level }}" {% if article.path %}data-path="{{ article.path|resolveFile }}"{% endif %}>{{ article.title }}</a>
+        {% elif article.url %}
+            <a target="_blank" href="{{ article.url }}" class="item  {% if article.path == file.path and not article.anchor %}active{% endif %}" data-level="{{ article.level }}" {% if article.path %}data-path="{{ article.path|resolveFile }}"{% endif %}>{{ article.title }}</a>
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
+
+
+{% block book_summary %}
+    {% for part in summary.parts %}
+    <div class="panel panel-default">
+        {% if part.title %}
+        <div class="panel-heading">
+            <h3 class="panel-title">{{ part.title }}</h3>
+        </div>
+        {% endif %}
+
+        <div class="list-group">
+            {{ articles(part.articles) }}
+        </div>
+    </div>
+    {% endfor %}
+{% endblock %}

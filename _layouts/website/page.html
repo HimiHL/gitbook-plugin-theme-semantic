@@ -1,0 +1,92 @@
+{% extends "website/layout.html" %}
+
+{% block title %}{{ page.title }} · {{ super() }}{% endblock %}
+{% block description %}{{ page.description }}{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    {% if page.next and page.next.path %}
+    <link rel="next" href="{{ page.next.path|resolveFile }}" />
+    {% endif %}
+    {% if page.previous and page.previous.path %}
+    <link rel="prev" href="{{ page.previous.path|resolveFile }}" />
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+<div id="page">
+    <div class="ui borderless main menu header sticky" id="header">
+        <div class="ui large secondary menu">
+        {% block header %}
+            <div class="right menu">
+                <div class="header item">
+                    {% if config.pluginsConfig.themeSemantic.logo %}
+                        <img src="{{ config.pluginsConfig.themeSemantic.logo }}">
+                    {% endif %}
+                    &nbsp;
+                    &nbsp;
+                    {{ config.title }}
+                </div>
+            </div>
+            {% for menu in config.pluginsConfig.themeSemantic.menus %}
+                <a  class="item ui right floated" href="{{menu.url}}" {% if menu.target %} target="{{menu.target}}" {% endif %}>{{ menu.name }}</a>
+            {% endfor %}
+        </div>
+        {% endblock %}
+    </div>
+    <div id="container">
+            <div class="ui container">
+                <div class="container">
+                    <div class="ui grid">
+                        <div class="four wide column">
+                            {% include "website/sidenav.html" %}
+                        </div>
+                        <div class="eight wide column">
+                            {% block search_results %}
+                                {% block page %}
+                                <div class="gb-markdown book-page-inner">
+                                    {{ page.content|safe }}
+                                </div>
+                                {% endblock %}
+                            {% endblock %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ui inverted vertical footer segment" id="footer">
+                <div class="ui container">
+                    <div class="ui stackable inverted divided equal height stackable grid">
+                        {% for foot in config.pluginsConfig.themeSemantic.footer %}
+                            <div class="four wide column">
+                                <h4 class="ui inverted header">{{foot.name}}</h4>
+                                <div class="ui inverted link list">
+                                    {% if foot.list %}
+                                        {% for menu in foot.list %}
+                                            <a  class="item" href="{{menu.url}}" {% if menu.target %} target="{{menu.target}}" {% endif %}>{{ menu.name }}</a>
+                                        {% endfor %}
+                                    {% else %}
+                                        <p>{{foot.value}}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+    </div>
+</div>
+
+<script src="{{ "gitbook.js"|resolveAsset }}"></script>
+{% for resource in plugins.resources.js %}
+    {% if resource.url %}
+    <script src="{{ resource.url }}"></script>
+    {% else %}
+    <script src="{{ resource.path|resolveAsset }}"></script>
+    {% endif %}
+{% endfor %}
+<script>
+(function() {
+    gitbook.page.hasChanged({{ template.getJSContext()|dump|safe }});
+})();
+</script>
+{% endblock %}
